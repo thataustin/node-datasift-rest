@@ -33,12 +33,15 @@ DataSift.prototype.sendRequest = function sendRequest(call, params, callback){
   var headers = {
     Auth: this.vars.username + ":" + this.vars.api_key
   };
-  var req = request.post({
+  var req = request.defaults({
+    secureOptions: require('constants').SSL_OP_NO_TLSv1
+  });
+  req.post({
     headers: headers,
     url: "https://api.datasift.com/" + call,
     form: params
   }, function(err, res, data){
-    if (err) { 
+    if (err) {
       callback(new DataSiftError(err));
     } else {
       if (!data) { data = "{}" };
@@ -53,10 +56,10 @@ DataSift.prototype.sendRequest = function sendRequest(call, params, callback){
 };
 
 function DataSiftError (message) {
-  Error.captureStackTrace(this, DataSiftError); 
+  Error.captureStackTrace(this, DataSiftError);
   this.message = message;
 }
 
-util.inherits(DataSiftError, Error); 
+util.inherits(DataSiftError, Error);
 
 module.exports = DataSift;
